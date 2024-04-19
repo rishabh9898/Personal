@@ -10,6 +10,4 @@ class Solution:
             elif i*i>x:
                 num = i-1
                 return num
-        return
-        
         
