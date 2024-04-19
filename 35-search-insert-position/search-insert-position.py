@@ -5,6 +5,8 @@ class Solution:
         l = 0
         r = len(nums)-1
 
+        mid = l+(r-l)//2
+
         if target > nums[r]:
             return r+1
         elif target<nums[l]:
@@ -24,5 +26,8 @@ class Solution:
             else:
                 l = mid+1
         
-        return l
+        if target>nums[mid]:
+            return mid+1
+        
+        return mid
         
