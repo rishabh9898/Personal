@@ -1,0 +1,9 @@
+Linux commands 
+
+q1 : Find hidden file name in directory , 
+
+use find . -name ".*" -f ( every hidden file starts with .) and -f to find for only files 
+
+cat .hiddenfile to view content of it 
+
+
