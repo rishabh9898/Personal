@@ -17,3 +17,9 @@ nano name.txt : to write to that file
 Ctrl-X to exit (save and discard) the nano. 
 
 cat name.txt : to view the information 
+
+vim name.txt : to enter vim. 
+
+step 1 : press "i" to enter insert mode 
+step 2 " write ":w" to write to the file 
+step 3 : write ":q" to exit the file 
