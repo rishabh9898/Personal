@@ -23,3 +23,6 @@ vim name.txt : to enter vim.
 step 1 : press "i" to enter insert mode 
 step 2 " write ":w" to write to the file 
 step 3 : write ":q" to exit the file 
+
+Alternate steps " write ":wq" to write and exit vim " 
+write ":q!" to quit vim without making any changes to it
