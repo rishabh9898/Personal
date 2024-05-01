@@ -6,4 +6,14 @@ use find . -name ".*" -f ( every hidden file starts with .) and -f to find for o
 
 cat .hiddenfile to view content of it 
 
+pwd : current working directory 
 
+ls /mnt/ : this shows all the drive mounted in my system
+
+touch name.txt : to create a txt file
+
+nano name.txt : to write to that file 
+
+Ctrl-X to exit (save and discard) the nano. 
+
+cat name.txt : to view the information 
