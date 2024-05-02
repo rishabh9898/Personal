@@ -1,31 +1,138 @@
 Linux commands 
 
-q1 : Find hidden file name in directory , 
+Q1 : Find hidden file name in directory , 
 
-use find . -name ".*" -f ( every hidden file starts with .) and -f to find for only files 
+Ans : use find . -name ".*" -f ( every hidden file starts with .) and -f to find for only files 
 
-cat .hiddenfile to view content of it 
+Q2: How to view contents of a hidden file ? 
+Ans: cat .hiddenfile to view content of it 
 
-pwd : current working directory 
+Q3 : How to view current directory ?
+As : pwd : current working directory 
 
-ls /mnt/ : this shows all the drive mounted in my system
+Q4 : How to view which drive is mounted ?
+Ans : ls /mnt/ : this shows all the drive mounted in my system
 
-touch name.txt : to create a txt file
+Q5 : How to create a txt file ?
+Ans : touch name.txt : to create a txt file
 
-nano name.txt : to write to that file 
+Q6 How to write to file usign nano? 
+Ans : nano name.txt : to write to that file 
 
 Ctrl-X to exit (save and discard) the nano. 
 
 cat name.txt : to view the information 
 
-vim name.txt : to enter vim. 
+Q7 : How to create a text file and edit it using vim ?
+Ans : vim name.txt : to enter vim. 
 
-step 1 : press "i" to enter insert mode 
-step 2 " write ":w" to write to the file 
-step 3 : write ":q" to exit the file 
+  step 1 : press "i" to enter insert mode 
+  step 2 " write ":w" to write to the file 
+  step 3 : write ":q" to exit the file 
 
 Alternate steps " write ":wq" to write and exit vim " 
 write ":q!" to quit vim without making any changes to it
+
+Q8 : How to find 
 ls -l | grep pdf ( this basically acts as ctrl-f , grep is used as control f in this scenario) 
 
 rm name.txt (removes the file) 
+
+wc -w < name.txt (gets the word count of the file)
+wc -w << name.txt (gets the word count of the file with multiple lines)
+
+wc -w <<< "nice out there" ( output is 3)
+
+[ hello = hello ] or [ hello -eq hello ]
+echo $? 
+output = 0 (this means yes it is equal) 
+
+#!/bin/bash ( to use in start of shell files to make it executable) 
+
+#!/bin/bash
+
+using case type 
+
+case ${1,,} in
+        rishabh | admin)
+                echo "yes, sign in"
+                ;;
+        help)
+                echo "your name"
+                ;;
+        *)
+                echo "invalid, please try again"
+                ;;
+esac
+
+
+LIST/ARRAY
+Create a list : list=(one two three)
+Output everything from a list : echo ${list[@]}
+Output specific item from a list : echo ${list[0]}
+
+"-n" is a command to ignore newline character
+
+USING FUNCTION (LOCAL VARIABLES)
+
+#!/bin/bash
+up="before"
+since="function"
+
+echo $up $since
+showuptime(){
+        local up=$(uptime -p | cut -c4-)
+
+        local since=$(uptime -s)
+        cat << EOF
+machine is up for ${up}.
+Running since ${since}
+EOF
+}
+showuptime
+echo after $since
+
+
+USING FUNCTION WITH RETURNS 0 AND 1
+#!/bin/bash
+
+showname(){
+        echo hello $1
+        if [ ${1,,} = rishabh ]; then
+                return 0
+        else
+                return 1
+        fi
+}
+showname $1
+if [ $? = 1 ]; then
+        echo "unknown"
+fi  
+
+USING AWK TO PRINT CONTENTS FROM FILE 
+echo yes no wow > testingfile.txt
+awk '{print $1}' testingfile.txt
+OUTPUT = yes
+
+REPLACING TEXT 
+vim filename.txt
+sed 's/fly/grasshopper/g' filename.txt 
+This replaces "flying" with "grasshopper" , the keyword 's' means "substitute" and 'g' means globally 
+
+CREATING COPY OF A FILE 
+sed -i.ORIGINAL 's/fly/grasshopper/g' filename.txt 
+output : vim filename.txt.ORIGINAL 
+
+USING BRACKETS 
+
+files=$(ls) 
+output: prints the contents of the file
+
+HOW TO CHECK THE VARIABLES DECLARED IN THE ENVIRONMENT
+$ env
+
+HOW TO CHECK USERNAME OF USER 
+echo $USER
+
+HOW TO DO BASIC ARITHMETIC 
+expr 30 + 20, Ans : 50
