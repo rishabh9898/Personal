@@ -26,3 +26,4 @@ step 3 : write ":q" to exit the file
 
 Alternate steps " write ":wq" to write and exit vim " 
 write ":q!" to quit vim without making any changes to it
+ls -l | grep pdf ( this basically acts as ctrl-f , grep is used as control f in this scenario) 
