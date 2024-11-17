@@ -11,6 +11,7 @@ class Solution:
         for value, symbol in roman:
             count = num // value
             res += symbol * count
-            num -= value * count
+            # num -= value * count
+            num = num%value
         
         return res
