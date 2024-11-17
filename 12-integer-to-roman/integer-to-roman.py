@@ -7,11 +7,10 @@ class Solution:
         ]
         
         res = ""
-        
-        for value, symbol in roman:
-            count = num // value
-            res += symbol * count
-            # num -= value * count
-            num = num%value
+
+        for val,sym in roman:
+            count = num // val
+            res += count * sym
+            num = num%val
         
         return res
