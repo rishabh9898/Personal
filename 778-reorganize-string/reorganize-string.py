@@ -2,36 +2,45 @@ class Solution:
     def reorganizeString(self, s: str) -> str:
 
         dict = {}
-
+        
         for i in s:
             if i in dict:
-                dict[i]+=1
+                dict[i] +=1
             else:
                 dict[i] = 1
         
-        maxHeap = [[-cnt,char] for char,cnt in dict.items()]
+        #  we have characters stored 
+
+        maxHeap = [ [-1*cnt,char] for char,cnt in dict.items()]
 
         heapq.heapify(maxHeap)
 
+
         prev = None
+
         res = ""
 
-        while maxHeap or prev:
+        while prev or maxHeap:
 
             if prev and not maxHeap:
                 return ""
-            cnt,char = heapq.heappop(maxHeap)
-            res+=char
-            cnt+=1
+
+            count,char = heapq.heappop(maxHeap)
+            res +=char
+            count+=1
 
             if prev:
-                heapq.heappush(maxHeap,prev)
+                heapq.heappush(maxHeap, prev)
                 prev = None
 
-            if cnt!=0:
-                prev = [cnt,char]
+            if count!=0:
+                prev = [count,char]
+
         return res
-        
+
+            
+
+
         
 
 
