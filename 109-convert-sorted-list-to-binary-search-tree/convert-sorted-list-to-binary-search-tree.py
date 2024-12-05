@@ -2,22 +2,27 @@
 class Solution:
     def sortedListToBST(self, head: Optional[List[int]]) -> Optional[TreeNode]:
         # Helper function to find the middle node
-        def find_middle(start, end):
-            slow, fast = start, start
-            while fast != end and fast.next != end:
+
+        def middle(st,end):
+            slow = st
+            fast = st
+
+            while fast!=end and fast.next!=end:
                 slow = slow.next
                 fast = fast.next.next
+            
             return slow
+        
 
-        # Helper function to recursively build the tree
-        def build_tree(start, end):
-            if start == end:
+        def rec(st,end):
+            if st == end:
                 return None
-
-            mid = find_middle(start, end)
+            
+            mid = middle(st,end)
             root = TreeNode(mid.val)
-            root.left = build_tree(start, mid)  # Left subtree
-            root.right = build_tree(mid.next, end)  # Right subtree
+            root.left = rec(st,mid)
+            root.right = rec(mid.next,end)
+
             return root
 
-        return build_tree(head, None)
+        return rec(head,None)
