@@ -1,41 +1,49 @@
 class Solution:
     def myAtoi(self, s: str) -> int:
-        strRes = ""
-        isNeg = False
-        started = False
 
-        for i in s:
-            if i == " " and not started:
-                # Skip leading spaces
+        counter = 0
+        res = ""
+        sign = 1
+        visited = 0
+
+        while counter<len(s):
+            
+            if (s[counter] == " ")  and visited == 0:
+                counter+=1
+                continue
+            elif s[counter] == "0" and visited == 0:
+                counter+=1
+                visited = 1
                 continue
 
-            if i == "-" and not started:
-                # Handle negative sign
-                started = True
-                isNeg = True
-            elif i == "+" and not started:
-                # Handle positive sign
-                started = True
+            elif s[counter] == "+" and visited == 0:
+                counter+=1
+                visited = 1
                 continue
-            elif i.isdigit():
-                # Collect digits
-                strRes += i
-                started = True
-            elif started:
-                # If we've started collecting digits and encounter a non-digit
-                break
+
+            elif s[counter] == "-" and visited == 0:
+                sign = -1*sign
+                counter+=1
+                visited = 1
+                continue
+
+            elif s[counter].isdigit():
+                visited = 1
+                res+=s[counter]
+                counter+=1
+            
             else:
-                # If no number has started, break immediately
                 break
 
-        # If no valid number is found
-        if not strRes:
+        if not res:
             return 0
+        
+        return max(min(sign*int(res),2**31-1),-2**31)
 
-        # Convert the result
-        res = int(strRes)
-        if isNeg:
-            res = -res
 
-        # Clamp the result to fit within 32-bit integer range
-        return max(min(res, 2**31 - 1), -2**31)
+
+            
+
+
+        
+
