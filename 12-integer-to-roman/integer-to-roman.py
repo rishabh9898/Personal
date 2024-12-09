@@ -5,12 +5,15 @@ class Solution:
             (100, "C"), (90, "XC"), (50, "L"), (40, "XL"),
             (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")
         ]
-        
+
         res = ""
 
         for val,sym in roman:
-            count = num // val
-            res += count * sym
+            count = num//val
+            res+= sym*count
             num = num%val
-        
         return res
+            
+
+
+
