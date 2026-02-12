@@ -44,18 +44,32 @@ def check_environment():
             logger.error(".env.example not found!")
             return False
 
-    # Check for OpenAI API key
+    # Check for AI API key
     from dotenv import load_dotenv
     load_dotenv()
 
-    openai_key = os.getenv("OPENAI_API_KEY")
-    if not openai_key or openai_key == "your_openai_api_key_here":
-        logger.error("❌ OpenAI API key not configured!")
-        logger.error("Please set OPENAI_API_KEY in your .env file")
-        logger.error("Get your API key from: https://platform.openai.com/api-keys")
-        return False
+    ai_provider = os.getenv("AI_PROVIDER", "claude").lower()
 
-    logger.info("✓ OpenAI API key found")
+    if ai_provider == "claude":
+        anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+        if not anthropic_key or anthropic_key == "your_anthropic_api_key_here":
+            logger.error("❌ Claude (Anthropic) API key not configured!")
+            logger.error("Please set ANTHROPIC_API_KEY in your .env file")
+            logger.error("Get your API key from: https://console.anthropic.com/")
+            logger.error("")
+            logger.error("Or switch to OpenAI by setting AI_PROVIDER=openai in .env")
+            return False
+        logger.info("✓ Claude API key found")
+    else:  # openai
+        openai_key = os.getenv("OPENAI_API_KEY")
+        if not openai_key or openai_key == "your_openai_api_key_here":
+            logger.error("❌ OpenAI API key not configured!")
+            logger.error("Please set OPENAI_API_KEY in your .env file")
+            logger.error("Get your API key from: https://platform.openai.com/api-keys")
+            logger.error("")
+            logger.error("Or switch to Claude by setting AI_PROVIDER=claude in .env")
+            return False
+        logger.info("✓ OpenAI API key found")
 
     # Check if required directories exist
     data_dir = Path("backend/data")

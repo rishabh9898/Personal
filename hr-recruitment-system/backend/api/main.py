@@ -65,6 +65,9 @@ def get_orchestrator() -> AgentOrchestrator:
     global orchestrator
     if orchestrator is None:
         config = {
+            'ai_provider': settings.ai_provider,
+            'anthropic_api_key': settings.anthropic_api_key,
+            'claude_model': settings.claude_model,
             'openai_api_key': settings.openai_api_key,
             'openai_model': settings.openai_model,
             'headless': settings.headless_browser,
@@ -72,7 +75,7 @@ def get_orchestrator() -> AgentOrchestrator:
             'max_candidates': settings.max_candidates_per_search
         }
         orchestrator = AgentOrchestrator(config=config)
-        logger.info("Orchestrator initialized")
+        logger.info(f"Orchestrator initialized with AI provider: {settings.ai_provider}")
     return orchestrator
 
 

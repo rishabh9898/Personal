@@ -17,9 +17,20 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edit `.env` and add your OpenAI API key:
+Edit `.env` and add your API key:
+
+**Option 1: Claude (Recommended)**
 ```env
-OPENAI_API_KEY=sk-your-actual-api-key-here
+AI_PROVIDER=claude
+ANTHROPIC_API_KEY=your-claude-api-key-here
+```
+
+**Get your Claude API key**: https://console.anthropic.com/
+
+**Option 2: OpenAI (Alternative)**
+```env
+AI_PROVIDER=openai
+OPENAI_API_KEY=sk-your-openai-api-key-here
 ```
 
 **Get your OpenAI API key**: https://platform.openai.com/api-keys
@@ -101,9 +112,10 @@ Navigate to: **http://localhost:8000**
 
 ## 🛠️ Troubleshooting
 
-**"OpenAI API key not configured"**
-- Edit `.env` file and add your API key
+**"API key not configured"**
+- Edit `.env` file and add your API key (ANTHROPIC_API_KEY for Claude or OPENAI_API_KEY for OpenAI)
 - Make sure there are no quotes around the key
+- Set AI_PROVIDER=claude or AI_PROVIDER=openai
 - Restart the application
 
 **"ChromeDriver not found"**

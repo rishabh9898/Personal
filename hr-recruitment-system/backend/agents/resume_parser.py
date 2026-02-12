@@ -4,11 +4,11 @@ Extracts key information from resumes using AI
 """
 
 import os
+import json
 from typing import Dict, Any, List
 import PyPDF2
 import docx
 import pdfplumber
-from openai import AsyncOpenAI
 from .base_agent import BaseAgent
 
 
@@ -19,8 +19,16 @@ class ResumeParserAgent(BaseAgent):
 
     def __init__(self, agent_id: str = "resume_parser", config: Dict[str, Any] = None):
         super().__init__(agent_id, config)
-        self.client = AsyncOpenAI(api_key=config.get('openai_api_key'))
-        self.model = config.get('openai_model', 'gpt-4-turbo-preview')
+        self.ai_provider = config.get('ai_provider', 'claude')
+
+        if self.ai_provider == 'claude':
+            from anthropic import AsyncAnthropic
+            self.client = AsyncAnthropic(api_key=config.get('anthropic_api_key'))
+            self.model = config.get('claude_model', 'claude-3-5-sonnet-20241022')
+        else:  # openai
+            from openai import AsyncOpenAI
+            self.client = AsyncOpenAI(api_key=config.get('openai_api_key'))
+            self.model = config.get('openai_model', 'gpt-4-turbo-preview')
 
     def extract_text_from_pdf(self, file_path: str) -> str:
         """
@@ -96,7 +104,7 @@ class ResumeParserAgent(BaseAgent):
 
     async def parse_resume_with_ai(self, resume_text: str) -> Dict[str, Any]:
         """
-        Parse resume text using OpenAI GPT
+        Parse resume text using AI (Claude or OpenAI)
 
         Args:
             resume_text: Raw text from resume
@@ -104,7 +112,7 @@ class ResumeParserAgent(BaseAgent):
         Returns:
             Structured resume data
         """
-        system_prompt = """You are an expert HR assistant specialized in analyzing resumes.
+        prompt_content = """You are an expert HR assistant specialized in analyzing resumes.
 Extract the following information from the resume and return it in a structured JSON format:
 
 {
@@ -135,21 +143,52 @@ Extract the following information from the resume and return it in a structured 
   "years_of_experience": "Estimated total years of experience (number)"
 }
 
-Extract all available information. If a field is not found, use null or empty array."""
+Extract all available information. If a field is not found, use null or empty array.
+
+Resume to parse:
+
+{resume_text}"""
 
         try:
-            response = await self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"Parse this resume:\n\n{resume_text}"}
-                ],
-                temperature=0.1,
-                response_format={"type": "json_object"}
-            )
+            if self.ai_provider == 'claude':
+                # Use Claude API
+                response = await self.client.messages.create(
+                    model=self.model,
+                    max_tokens=4096,
+                    temperature=0.1,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": prompt_content.format(resume_text=resume_text)
+                        }
+                    ]
+                )
 
-            import json
-            parsed_data = json.loads(response.choices[0].message.content)
+                # Extract JSON from Claude response
+                response_text = response.content[0].text
+
+                # Try to extract JSON from the response
+                import re
+                json_match = re.search(r'\{[\s\S]*\}', response_text)
+                if json_match:
+                    parsed_data = json.loads(json_match.group())
+                else:
+                    parsed_data = json.loads(response_text)
+
+            else:  # openai
+                # Use OpenAI API
+                response = await self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system", "content": "You are an expert HR assistant. Return valid JSON only."},
+                        {"role": "user", "content": prompt_content.format(resume_text=resume_text)}
+                    ],
+                    temperature=0.1,
+                    response_format={"type": "json_object"}
+                )
+
+                parsed_data = json.loads(response.choices[0].message.content)
+
             return parsed_data
 
         except Exception as e:

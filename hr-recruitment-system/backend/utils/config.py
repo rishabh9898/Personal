@@ -12,8 +12,15 @@ class Settings(BaseSettings):
     Application settings loaded from environment variables
     """
 
-    # OpenAI Configuration
-    openai_api_key: str
+    # AI Provider Configuration
+    ai_provider: str = "claude"  # Options: "claude" or "openai"
+
+    # Claude (Anthropic) Configuration
+    anthropic_api_key: Optional[str] = None
+    claude_model: str = "claude-3-5-sonnet-20241022"
+
+    # OpenAI Configuration (alternative)
+    openai_api_key: Optional[str] = None
     openai_model: str = "gpt-4-turbo-preview"
 
     # LinkedIn Credentials (optional)

@@ -1,6 +1,6 @@
 # 🤖 HR Recruitment Agent System
 
-An intelligent, multi-agent system for automating candidate sourcing and resume analysis. This system leverages AI (GPT-4) and web scraping to help HR professionals find and evaluate the best candidates quickly and efficiently.
+An intelligent, multi-agent system for automating candidate sourcing and resume analysis. This system leverages AI (Claude or GPT-4) and web scraping to help HR professionals find and evaluate the best candidates quickly and efficiently.
 
 ## ✨ Features
 
@@ -12,12 +12,12 @@ An intelligent, multi-agent system for automating candidate sourcing and resume 
   - Automated profile extraction
 
 - **Intelligent Resume Parsing**
-  - AI-powered resume analysis using GPT-4
+  - AI-powered resume analysis using Claude or GPT-4
   - Supports PDF, DOCX, DOC, and TXT formats
   - Extracts structured information (name, email, skills, experience, etc.)
 
 - **AI-Powered Candidate Ranking**
-  - Automatic scoring against job requirements
+  - Automatic scoring against job requirements using advanced AI
   - Detailed match analysis with strengths and weaknesses
   - Intelligent shortlist generation
   - Personalized recommendations
@@ -43,7 +43,8 @@ The system uses specialized agents that work together:
 ### Prerequisites
 
 - Python 3.8 or higher
-- OpenAI API key (for GPT-4 access)
+- **Claude API key (Recommended)** - Get from https://console.anthropic.com/
+  - OR OpenAI API key - Get from https://platform.openai.com/api-keys
 - Chrome/Chromium browser (for web scraping)
 
 ### Installation
@@ -69,8 +70,22 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edit `.env` and add your configuration:
+Edit `.env` and add your API key:
+
+**Option 1: Claude (Recommended)**
 ```env
+AI_PROVIDER=claude
+ANTHROPIC_API_KEY=your_claude_api_key_here
+CLAUDE_MODEL=claude-3-5-sonnet-20241022
+
+# Optional: LinkedIn credentials for authenticated searches
+LINKEDIN_EMAIL=your_linkedin_email
+LINKEDIN_PASSWORD=your_linkedin_password
+```
+
+**Option 2: OpenAI**
+```env
+AI_PROVIDER=openai
 OPENAI_API_KEY=your_openai_api_key_here
 OPENAI_MODEL=gpt-4-turbo-preview
 
@@ -190,8 +205,11 @@ The system provides a REST API:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `OPENAI_API_KEY` | OpenAI API key (required) | - |
-| `OPENAI_MODEL` | GPT model to use | gpt-4-turbo-preview |
+| `AI_PROVIDER` | AI provider to use: "claude" or "openai" | claude |
+| `ANTHROPIC_API_KEY` | Claude (Anthropic) API key | - |
+| `CLAUDE_MODEL` | Claude model to use | claude-3-5-sonnet-20241022 |
+| `OPENAI_API_KEY` | OpenAI API key (if using OpenAI) | - |
+| `OPENAI_MODEL` | GPT model to use (if using OpenAI) | gpt-4-turbo-preview |
 | `LINKEDIN_EMAIL` | LinkedIn email (optional) | - |
 | `LINKEDIN_PASSWORD` | LinkedIn password (optional) | - |
 | `APP_HOST` | Server host | 0.0.0.0 |

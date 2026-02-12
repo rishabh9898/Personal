@@ -4,8 +4,8 @@ Scores and ranks candidates based on job requirements using AI
 """
 
 from typing import Dict, Any, List
-from openai import AsyncOpenAI
 import json
+import re
 from .base_agent import BaseAgent
 
 
@@ -16,8 +16,16 @@ class CandidateRankerAgent(BaseAgent):
 
     def __init__(self, agent_id: str = "candidate_ranker", config: Dict[str, Any] = None):
         super().__init__(agent_id, config)
-        self.client = AsyncOpenAI(api_key=config.get('openai_api_key'))
-        self.model = config.get('openai_model', 'gpt-4-turbo-preview')
+        self.ai_provider = config.get('ai_provider', 'claude')
+
+        if self.ai_provider == 'claude':
+            from anthropic import AsyncAnthropic
+            self.client = AsyncAnthropic(api_key=config.get('anthropic_api_key'))
+            self.model = config.get('claude_model', 'claude-3-5-sonnet-20241022')
+        else:  # openai
+            from openai import AsyncOpenAI
+            self.client = AsyncOpenAI(api_key=config.get('openai_api_key'))
+            self.model = config.get('openai_model', 'gpt-4-turbo-preview')
 
     async def score_candidate(self, candidate: Dict[str, Any], job_requirements: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -70,17 +78,45 @@ Candidate Profile:
 Analyze this candidate and provide a detailed scoring and recommendation."""
 
         try:
-            response = await self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                temperature=0.2,
-                response_format={"type": "json_object"}
-            )
+            if self.ai_provider == 'claude':
+                # Use Claude API
+                full_prompt = system_prompt + "\n\n" + user_prompt
+                response = await self.client.messages.create(
+                    model=self.model,
+                    max_tokens=4096,
+                    temperature=0.2,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": full_prompt
+                        }
+                    ]
+                )
 
-            scoring = json.loads(response.choices[0].message.content)
+                # Extract JSON from Claude response
+                response_text = response.content[0].text
+
+                # Try to extract JSON from the response
+                json_match = re.search(r'\{[\s\S]*\}', response_text)
+                if json_match:
+                    scoring = json.loads(json_match.group())
+                else:
+                    scoring = json.loads(response_text)
+
+            else:  # openai
+                # Use OpenAI API
+                response = await self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=0.2,
+                    response_format={"type": "json_object"}
+                )
+
+                scoring = json.loads(response.choices[0].message.content)
+
             return scoring
 
         except Exception as e:
@@ -167,17 +203,44 @@ Provide a JSON response with:
 }}"""
 
         try:
-            response = await self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are an expert HR recruiter providing hiring recommendations."},
-                    {"role": "user", "content": summary_prompt}
-                ],
-                temperature=0.3,
-                response_format={"type": "json_object"}
-            )
+            if self.ai_provider == 'claude':
+                # Use Claude API
+                full_prompt = "You are an expert HR recruiter providing hiring recommendations.\n\n" + summary_prompt
+                response = await self.client.messages.create(
+                    model=self.model,
+                    max_tokens=2048,
+                    temperature=0.3,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": full_prompt
+                        }
+                    ]
+                )
 
-            summary = json.loads(response.choices[0].message.content)
+                # Extract JSON from Claude response
+                response_text = response.content[0].text
+
+                # Try to extract JSON from the response
+                json_match = re.search(r'\{[\s\S]*\}', response_text)
+                if json_match:
+                    summary = json.loads(json_match.group())
+                else:
+                    summary = json.loads(response_text)
+
+            else:  # openai
+                # Use OpenAI API
+                response = await self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system", "content": "You are an expert HR recruiter providing hiring recommendations."},
+                        {"role": "user", "content": summary_prompt}
+                    ],
+                    temperature=0.3,
+                    response_format={"type": "json_object"}
+                )
+
+                summary = json.loads(response.choices[0].message.content)
 
             return {
                 'shortlist': shortlist,
