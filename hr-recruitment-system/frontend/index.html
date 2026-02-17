@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Recruitment Agent System</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 HR Recruitment Agent System</h1>
+            <p class="subtitle">AI-Powered Candidate Sourcing & Analysis</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('search', this)">Search Candidates</button>
+            <button class="tab-button" onclick="switchTab('upload', this)">Upload Resumes</button>
+            <button class="tab-button" onclick="switchTab('results', this)">Results</button>
+            <button class="tab-button" onclick="switchTab('status', this)">Agent Status</button>
+        </div>
+
+        <!-- Search Candidates Tab -->
+        <div id="search-tab" class="tab-content active">
+            <div class="card">
+                <h2>Search for Candidates</h2>
+                <form id="search-form" class="form">
+                    <div class="form-section">
+                        <h3>Job Information</h3>
+                        <div class="form-group">
+                            <label for="job-title">Job Title *</label>
+                            <input type="text" id="job-title" placeholder="e.g., Senior Software Engineer" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" placeholder="e.g., San Francisco, CA">
+                        </div>
+                        <div class="form-group">
+                            <label for="keywords">Keywords (comma-separated)</label>
+                            <input type="text" id="keywords" placeholder="e.g., Python, React, AWS">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Search Options</h3>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="search-linkedin" checked>
+                                Search LinkedIn
+                            </label>
+                            <label>
+                                <input type="checkbox" id="search-indeed" checked>
+                                Search Indeed
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="max-candidates">Max Candidates Per Source</label>
+                            <input type="number" id="max-candidates" value="50" min="1" max="100">
+                        </div>
+                    </div>
+
+                    <div class="form-section collapsible">
+                        <h3 onclick="toggleSection(this)">⮞ LinkedIn Authentication (Optional)</h3>
+                        <div class="collapsible-content">
+                            <div class="form-group">
+                                <label for="linkedin-email">LinkedIn Email</label>
+                                <input type="email" id="linkedin-email" placeholder="your@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="linkedin-password">LinkedIn Password</label>
+                                <input type="password" id="linkedin-password" placeholder="••••••••">
+                            </div>
+                            <p class="help-text">Login increases search limits and access to more details</p>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Job Requirements (for AI Ranking)</h3>
+                        <div class="form-group">
+                            <label for="job-description">Job Description</label>
+                            <textarea id="job-description" rows="4" placeholder="Describe the role, responsibilities, and ideal candidate..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="required-skills">Required Skills (comma-separated)</label>
+                            <input type="text" id="required-skills" placeholder="e.g., JavaScript, Node.js, PostgreSQL">
+                        </div>
+                        <div class="form-group">
+                            <label for="min-experience">Minimum Years of Experience</label>
+                            <input type="number" id="min-experience" value="3" min="0" max="20">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">🚀 Start Recruitment Search</span>
+                        <span class="loading-spinner" style="display: none;">⏳ Processing...</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Upload Resumes Tab -->
+        <div id="upload-tab" class="tab-content">
+            <div class="card">
+                <h2>Upload & Parse Resumes</h2>
+                <form id="upload-form" class="form">
+                    <div class="form-group">
+                        <label for="resume-files">Select Resume Files</label>
+                        <input type="file" id="resume-files" multiple accept=".pdf,.docx,.doc,.txt">
+                        <p class="help-text">Supported formats: PDF, DOCX, DOC, TXT</p>
+                    </div>
+
+                    <div id="file-list" class="file-list"></div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">📄 Upload & Parse Resumes</span>
+                        <span class="loading-spinner" style="display: none;">⏳ Parsing...</span>
+                    </button>
+                </form>
+
+                <div id="uploaded-files-section" style="margin-top: 30px;">
+                    <h3>Uploaded Files</h3>
+                    <div id="uploaded-files-list"></div>
+                    <button onclick="loadUploadedFiles()" class="btn btn-secondary">🔄 Refresh List</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Tab -->
+        <div id="results-tab" class="tab-content">
+            <div class="card">
+                <h2>Recruitment Results</h2>
+                <div id="results-container">
+                    <p class="empty-state">No results yet. Run a search or upload resumes to get started.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Status Tab -->
+        <div id="status-tab" class="tab-content">
+            <div class="card">
+                <h2>Agent Status Dashboard</h2>
+                <button onclick="loadAgentStatus()" class="btn btn-secondary">🔄 Refresh Status</button>
+                <div id="agent-status-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
